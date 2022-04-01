@@ -1,0 +1,88 @@
+#========================================================================
+# Copyright 2020-2021 Joao Vitor Alves Fazolo and Rodrigo Laiola Guimaraes
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# 
+# This program is released under license GNU GPL v3+ license.
+#
+#========================================================================
+
+version: '3'
+
+services:
+    boca-web:
+        privileged: true
+        restart: unless-stopped
+        depends_on:
+            - boca-postgres
+        image: boca-web
+        build: 
+            context: .
+            dockerfile: docker/dev/web/Dockerfile
+        environment:
+            # Database configuration
+            - DB_HOST=boca-postgres
+            - DB_PORT=5432
+            - DB_NAME=bocadb
+            # unprivileged boca user
+            - DB_USER=bocauser
+            - DB_PASSWORD=dAm0HAiC
+            # privileged boca user
+            - DB_SUPER_USER=bocauser
+            - DB_SUPER_PASSWORD=dAm0HAiC
+            # initial password that is used by the admin user
+            # If not set, the default value is 'boca'
+            - BOCA_PASSWORD=boca
+            # secret key to be used in HTTP headers
+            # MUST set it with any random large enough sequence
+            - BOCA_KEY=GG56KFJtNDBGjJprR6ex
+        ports: 
+            - 8000:80
+
+    boca-jail:
+        privileged: true
+        restart: unless-stopped
+        depends_on:
+            - boca-postgres
+        image: boca-jail
+        build: 
+            context: .
+            dockerfile: docker/dev/jail/Dockerfile
+        environment:
+            # Database configuration
+            - DB_HOST=boca-postgres
+            - DB_PORT=5432
+            - DB_NAME=bocadb
+            # unprivileged boca user
+            - DB_USER=bocauser
+            - DB_PASSWORD=dAm0HAiC
+            - PASSWD=dAm0HAiC
+
+    boca-postgres:
+        image: postgres
+        container_name: boca-postgres
+        restart: unless-stopped
+        environment:
+            # Database configuration
+            # privileged boca user
+            POSTGRES_USER: bocauser
+            POSTGRES_PASSWORD: dAm0HAiC
+            # To avoid the following error with recent versions (> 13) of PorgreSQL:
+            #
+            #   FATAL:  password authentication failed for user "bocauser"
+            #   
+            #   You may also use POSTGRES_HOST_AUTH_METHOD=trust to allow all
+            #   connections without a password. This is *not* recommended. See
+            #   PostgreSQL documentation about "trust"
+            POSTGRES_HOST_AUTH_METHOD: trust

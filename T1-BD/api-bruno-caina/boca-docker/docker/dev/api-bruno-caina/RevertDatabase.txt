@@ -1,0 +1,17 @@
+-- revert
+
+drop table problemlangtable;
+
+alter table langtable drop constraint langnumber_unique;
+
+alter table problemtable drop constraint problemnumber_unique;
+
+drop table userworkingtable CASCADE;
+
+alter table usertable drop constraint usernumber_unique;
+
+alter table problemtable drop constraint working_fk;
+
+alter table problemtable drop column workingnumber;
+	
+drop table workingtable;

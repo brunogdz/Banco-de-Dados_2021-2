@@ -1,0 +1,39 @@
+CREATE TABLE "Schedule" ("time" integer PRIMARY KEY, "#t" integer NOT NULL, "op" character NOT NULL, "attr" character NOT NULL);
+DELETE FROM "Schedule"
+INSERT INTO public."Schedule"("time", "#t", "op", "attr")
+    VALUES
+-- 		(1, 1, 'R', 'X'),
+-- 		(2, 1, 'R', 'Y'),
+-- 		(3, 1, 'W', 'Y'),
+-- 		(4, 2, 'R', 'X'),
+-- 		(5, 2, 'C', '-'),
+-- 		(6, 1, 'C', '-')
+		
+		(1, 1, 'R', 'X'),
+		(2, 1, 'W', 'X'),
+		(3, 1, 'C', '-'),
+		(4, 2, 'R', 'X'),
+		(5, 2, 'W', 'X'),
+		(6, 2, 'C', '-')
+
+CREATE TABLE "Schedule_Prime" ("time" integer PRIMARY KEY, "#t" integer NOT NULL, "op" character NOT NULL, "attr" character NOT NULL);
+DELETE FROM "Schedule_Prime"
+INSERT INTO public."Schedule_Prime"("time", "#t", "op", "attr")
+    VALUES
+-- 		(1, 1, 'R', 'X'),
+-- 		(2, 1, 'R', 'Y'),
+-- 		(3, 2, 'R', 'X'),
+-- 		(4, 1, 'W', 'Y'),
+-- 		(5, 2, 'C', '-'),
+-- 		(6, 1, 'C', '-')
+		
+		(1, 1, 'R', 'X'),
+		(2, 2, 'R', 'X'),
+		(3, 2, 'W', 'X'),
+		(4, 1, 'W', 'X'),
+		(5, 2, 'C', '-'),
+		(6, 1, 'C', '-')
+
+SELECT * FROM "Schedule";
+SELECT * FROM "Schedule_Prime"
+WHERE "#t" = 1

@@ -1,0 +1,54 @@
+CREATE OR REPLACE FUNCTION testeEquivalenciaPorVisao()
+RETURNS integer AS $$
+DECLARE 
+	passed integer;
+	countS integer;
+	countSP integer;
+	s record;
+	sp record;
+	counter integer;
+	
+
+BEGIN
+		passed = 0;
+	
+		SELECT count(*) into countS FROM "Schedule";
+		SELECT count(*) into countSP FROM "Schedule_Prime";
+		
+		if(countS != countSP) then
+			RETURN 100;
+		end if;
+		
+		counter = 0;
+		
+		for s in SELECT "#t", "op", "attr" FROM "Schedule"
+		loop
+			for sp in SELECT "#t", "op", "attr" FROM "Schedule_Prime"
+			loop 
+				if(s."#t" = sp."#t" AND s."op" = sp."op" AND s."attr" = sp."attr") then
+					exit;
+				else
+					counter = counter + 1;
+				end if;
+			end loop;
+			
+			if(counter = countSP) then
+				RETURN 200;
+			else
+				counter = 0;
+			end if;
+		end loop;
+		
+		-- *-> PRIMEIRO PONTO ATÉ AQUI <-* --
+
+		-- *->  SEGUNDO PONTO ATÉ AQUI <-* --
+		
+		-- *-> TERCEIRO PONTO ATÉ AQUI <-* --
+		
+		RETURN 301;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT "testeequivalenciaporvisao"();
+
+

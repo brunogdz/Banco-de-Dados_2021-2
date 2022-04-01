@@ -1,0 +1,39 @@
+do
+$$
+DECLARE
+	countS integer;
+	countSP integer;
+	s record;
+	sp record;
+	counter integer;
+begin
+    SELECT count(*) into countS FROM "Schedule";
+	SELECT count(*) into countSP FROM "Schedule_Prime";
+	
+	raise notice 'count Schedule: %', countS;
+	raise notice 'count Schedule_Prime: %', countSP;
+
+	counter = 0;
+
+	for s in SELECT "#t", "op", "attr" FROM "Schedule"
+	loop
+		for sp in SELECT "#t", "op", "attr" FROM "Schedule_Prime"
+		loop
+			if(s."#t" = sp."#t" AND s."op" = sp."op" AND s."attr" = sp."attr") then
+				raise notice '% - % igual : )', s."#t", sp."#t";
+			else
+				counter = counter + 1;
+				raise notice '% - % diferente : (', s."#t", sp."#t";
+			end if;
+		end loop;
+				
+		if(counter = countSP) then
+			raise notice '------------ Nao tem na Prime';
+		else
+			raise notice '------------ counter: %', counter;
+			counter = 0;
+		end if;
+		
+	end loop;
+end;
+$$;
