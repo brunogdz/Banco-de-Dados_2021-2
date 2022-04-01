@@ -1,0 +1,86 @@
+#========================================================================
+# Copyright 2020-2021 Joao Vitor Alves Fazolo and Rodrigo Laiola Guimaraes
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# 
+# This program is released under license GNU GPL v3+ license.
+#
+#========================================================================
+
+# services:
+#   boca-postgres:
+#     ports: 
+#         - 5432:5432
+#     volumes: 
+#         - db-data:/var/lib/postgresql/data
+#   boca-api:
+#     build: .
+#     container_name: boca_api
+#     ports: 
+#       - 3000:3000
+#     volumes:
+#       - .:/api
+#     links:
+#       - boca-postgres
+#     depends_on:
+#       - boca-postgres
+
+#   boca-adminer:
+#     image: adminer
+#     restart: unless-stopped
+#     depends_on:
+#       - boca-postgres
+#     ports:
+#         - 8080:8080
+#     links:
+#       - boca-postgres
+
+# volumes:
+#     db-data:
+#       driver: local
+
+version: '3'
+
+services:
+  #boca-web 
+  # volumes
+  #
+  boca-postgres:
+    ports:
+      - 5432:5432
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  app:
+    image: api-bruno-caina
+    build: 
+      context: ./docker/dev/api-bruno-caina
+      dockerfile: Dockerfile
+    container_name: api_bruno_caina
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/usr/app
+    links: 
+      - boca-postgres
+    depends_on:
+      - boca-postgres
+    environment:
+      - DB_HOST=boca-postgres
+      - DB_PORT=5432
+      - DB_NAME=bocadb
+      # unprivileged boca user
+      - DB_USER=bocauser
+      - DB_PASSWORD=banco123
+      - PASSWD=banco123

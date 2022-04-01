@@ -1,0 +1,65 @@
+create TABLE workingtable (
+	workingnumber int primary key,
+	name varchar(50) not null,
+	startdate int,
+	enddate int,
+	lastanswerdate int,
+	maxfilesize int,
+	createdat int,
+	updatedat int,
+	ismultilogin bool,
+	deletedat int
+);
+
+alter table problemtable
+	add column workingnumber int,
+	add constraint working_fk
+		foreign key (workingnumber)
+		references workingtable(workingnumber);
+
+alter table usertable 
+	add constraint usernumber_unique unique (usernumber);
+
+create TABLE userworkingtable (
+	workingnumber int not null,
+	usernumber int not null,
+	primary key(workingnumber, usernumber),
+	constraint working_fk
+		foreign key(workingnumber)
+			references workingtable(workingnumber),
+	constraint user_fk
+		foreign key(usernumber)
+			references usertable(usernumber)
+);
+
+alter table problemtable 
+	add constraint problemnumber_unique unique (problemnumber);
+
+alter table langtable 
+	add constraint langnumber_unique unique (langnumber);
+
+create TABLE problemlangtable (
+	problemnumber int not null,
+	langnumber int not null,
+	primary key(problemnumber, langnumber),
+	constraint problem_fk
+		foreign key(problemnumber)
+			references problemtable(problemnumber),
+	constraint lang_fk
+		foreign key(langnumber)
+			references langtable(langnumber)
+);
+
+-- revert
+
+drop table problemlangtable;
+
+drop table userworkingtable;
+
+alter table usertable 
+	drop constraint usernumber_unique;
+
+alter table problemtable 
+	drop column workingnumber;
+	
+drop table workingtable;
